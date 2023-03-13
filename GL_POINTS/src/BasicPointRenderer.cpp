@@ -2,10 +2,14 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "lasreader_asc.hpp"
+
 #include "OpenGL/GL_Renderer.h"
 
 #include "MouseInput.h"
 #include "KeyboardInput.h"
+
+
 
 BasicPointRenderer::BasicPointRenderer(WindowSettings window_settings)
 	: 
@@ -34,6 +38,7 @@ void BasicPointRenderer::onUpdate(const float& dt)
 {
 	m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
 	m_cube_renderer.render();
+	m_point_renderer.render();
 }
 
 void BasicPointRenderer::init()
@@ -46,6 +51,32 @@ void BasicPointRenderer::init()
 	m_first_mouse_move = true;
 
 	initTestCube();
+
+	initPoints();
+
+}
+
+void BasicPointRenderer::initPoints()
+{
+	LASreadOpener* las_read_opener = new LASreadOpener();
+	LASreader* las_reader = las_read_opener->open("res/point_clouds/cube.ply");
+
+
+	while (las_reader->read_point()) {
+		LASpoint point = las_reader->point;
+
+		F64 x = las_reader->get_x();
+		F64 y = las_reader->get_y();
+		F64 z = las_reader->get_z();
+
+		F64 r = point.get_R();
+		F64 g = point.get_G();
+		F64 b = point.get_B();
+
+		m_point_renderer.addPointAt({ x, y, z }, { r, g, b });
+	}
+
+	m_point_renderer.init();
 }
 
 void BasicPointRenderer::initTestCube()
