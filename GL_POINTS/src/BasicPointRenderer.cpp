@@ -1,5 +1,6 @@
 #include "BasicPointRenderer.h"
 
+#include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "OpenGL/GL_Renderer.h"
@@ -36,6 +37,11 @@ void BasicPointRenderer::onUpdate(const float& dt)
 	m_cube_renderer.render();
 }
 
+void BasicPointRenderer::onImGuiUpdate()
+{
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+}
+
 void BasicPointRenderer::init()
 {
 	m_shader.loadShader("res/shaders/v.glsl", "res/shaders/f.glsl");
@@ -46,6 +52,7 @@ void BasicPointRenderer::init()
 	m_first_mouse_move = true;
 
 	initTestCube();
+	LASreader* las_reader = las_read_opener->open("res/point_clouds/mclaren.ply");
 }
 
 void BasicPointRenderer::initTestCube()
