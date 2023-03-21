@@ -65,7 +65,7 @@ void BasicPointRenderer::init()
 void BasicPointRenderer::initPoints()
 {
 	LASreadOpener* las_read_opener = new LASreadOpener();
-	LASreader* las_reader = las_read_opener->open("res/point_clouds/cube.ply");
+	LASreader* las_reader = las_read_opener->open("res/point_clouds/mclaren.ply");
 
 
 	while (las_reader->read_point()) {
