@@ -1,5 +1,6 @@
 #include "BasicPointRenderer.h"
 
+#include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "lasreader_asc.hpp"
@@ -39,6 +40,11 @@ void BasicPointRenderer::onUpdate(const float& dt)
 	m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
 	m_cube_renderer.render();
 	m_point_renderer.render();
+}
+
+void BasicPointRenderer::onImGuiUpdate()
+{
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
 void BasicPointRenderer::init()

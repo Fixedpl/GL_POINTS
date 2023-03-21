@@ -20,9 +20,16 @@ protected:
 
 	virtual void onUpdate(const float& delta) = 0;
 
+	virtual void onImGuiUpdate() {};
+
 private:
 
 	void loop();
+
+	void imGuiInit();
+	void imGuiNewFrame();
+	void imGuiRender();
+	void imGuiShutdown();
 
 protected:
 	

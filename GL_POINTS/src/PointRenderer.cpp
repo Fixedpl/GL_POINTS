@@ -34,9 +34,9 @@ void PointRenderer::init()
 		points_buffer[i * 6 + 1] = point.position.y;
 		points_buffer[i * 6 + 2] = point.position.z;
 
-		points_buffer[i * 6 + 3] = point.position.r;
-		points_buffer[i * 6 + 4] = point.position.g;
-		points_buffer[i * 6 + 5] = point.position.b;
+		points_buffer[i * 6 + 3] = point.color.r;
+		points_buffer[i * 6 + 4] = point.color.g;
+		points_buffer[i * 6 + 5] = point.color.b;
 	}
 
 	m_points_vbo->update(points_buffer, sizeof(PointData) * m_points.size(), 0);

@@ -21,6 +21,8 @@ public:
 
 	void onUpdate(const float& dt) override;
 
+	void onImGuiUpdate() override;
+
 private:
 
 	void init();
