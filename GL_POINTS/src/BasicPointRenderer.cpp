@@ -1,6 +1,7 @@
 #include "BasicPointRenderer.h"
 
 #include <imgui/imgui.h>
+#include <implot/implot.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "lasreader_asc.hpp"
@@ -45,6 +46,15 @@ void BasicPointRenderer::onUpdate(const float& dt)
 void BasicPointRenderer::onImGuiUpdate()
 {
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	if (ImPlot::BeginPlot("Line Plots")) {
+		float x[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f };
+		float y[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f };
+		ImPlot::SetupAxes("x", "y");
+		ImPlot::PlotLine("f(x)", x, y, 10);
+		ImPlot::EndPlot();
+	}
+
 }
 
 void BasicPointRenderer::init()
