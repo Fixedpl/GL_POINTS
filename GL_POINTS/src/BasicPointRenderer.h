@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "CubeRenderer.h"
+#include "PointRenderer.h"
 
 class BasicPointRenderer : public Application
 {
@@ -25,6 +26,7 @@ public:
 private:
 
 	void init();
+	void initPoints();
 	void initTestCube();
 
 	void handleMouseMovement();
@@ -45,6 +47,7 @@ private:
 	float m_yaw;
 	float m_pitch;
 
+	PointRenderer m_point_renderer;
 	CubeRenderer m_cube_renderer;
 
 };

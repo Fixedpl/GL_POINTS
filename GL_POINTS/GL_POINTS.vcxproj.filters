@@ -974,6 +974,9 @@
     <ClInclude Include="src\CubeRenderer.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="src\PointRenderer.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imconfig.h">
