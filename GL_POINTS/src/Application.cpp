@@ -34,6 +34,11 @@ void Application::run()
 	loop();
 }
 
+Window& Application::getWindow()
+{
+	return m_window;
+}
+
 void Application::loop()
 {
 	beforeUpdate();
