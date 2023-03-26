@@ -1,9 +1,14 @@
 #include "BasicPointRenderer.h"
 
 #include <imgui/imgui.h>
+#include <implot/implot.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <fstream>
 
-#include "lasreader_asc.hpp"
+#include "PointCloudHelper.h"
+
+#include "lasreader.hpp"
+#include "laswriter.hpp"
 
 #include "OpenGL/GL_Renderer.h"
 
@@ -12,14 +17,23 @@
 
 
 
-BasicPointRenderer::BasicPointRenderer(WindowSettings window_settings)
+BasicPointRenderer::BasicPointRenderer(WindowSettings window_settings, 
+	const std::string& point_cloud_path, 
+	const glm::vec3& camera_pos)
 	: 
 	Application(window_settings),
+	m_fov(m_default_fov),
+	m_flying_mode(m_default_flying_mode),
+	m_time_elapsed(0.0f),
 	m_camera(
 		window_settings.width, 
 		window_settings.height, 
-		m_starting_camera_pos
-	)
+		camera_pos,
+		m_fov
+	),
+	m_fps_data(m_seconds_measured / m_polling_rate),
+	m_tick(0),
+	m_point_cloud_path(point_cloud_path)
 {
 }
 
@@ -30,25 +44,53 @@ void BasicPointRenderer::beforeUpdate()
 
 void BasicPointRenderer::onEvent(const float& delta)
 {
-	handleMouseMovement();
+	handleMouse();
 
 	handleKeyboard(delta);
 }
 
 void BasicPointRenderer::onUpdate(const float& dt)
 {
+	m_time_elapsed += dt;
 	m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
-	m_cube_renderer.render();
+	//m_cube_renderer.render();
 	m_point_renderer.render();
 }
 
 void BasicPointRenderer::onImGuiUpdate()
 {
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	float imgui_framerate = ImGui::GetIO().Framerate;
+	float ms_per_frame = 1000.0f / imgui_framerate;
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", ms_per_frame, imgui_framerate);
+	if (m_time_elapsed - (m_tick * m_polling_rate) >= m_polling_rate * (m_tick + 1)) {
+		m_fps_data.add(m_time_elapsed, ms_per_frame);
+		m_tick++;
+	}
+
+	if (ImPlot::BeginPlot("Line Plots", ImVec2(400, 200))) {
+		ImPlot::SetupAxes("FPS", "t");
+		ImPlot::SetupAxesLimits(
+			max(0.0f, m_time_elapsed - m_seconds_measured), 
+			max(m_seconds_measured - 2 * m_polling_rate, 
+				m_time_elapsed - 2 * m_polling_rate), 
+			0, 
+			30, 
+			ImPlotCond_Always
+		);
+		ImPlot::PlotLine("f(x)", m_fps_data.x(), m_fps_data.y(), m_fps_data.size(), ImPlotFlags_::ImPlotFlags_None, m_fps_data.offset());
+		ImPlot::EndPlot();
+	}
+
+	ImGui::SliderFloat("FOV", &m_fov, 0.0f, 120.0f);
+	m_camera.fov() = m_fov;
+	m_camera.updatePerspectiveMatrix();
+	m_camera.updateMatrix();
 }
 
 void BasicPointRenderer::init()
 {
+	setFlyingMode(false);
+
 	m_shader.loadShader("res/shaders/v.glsl", "res/shaders/f.glsl");
 	m_shader.bind();
 
@@ -56,7 +98,7 @@ void BasicPointRenderer::init()
 
 	m_first_mouse_move = true;
 
-	initTestCube();
+	//initTestCube();
 
 	initPoints();
 
@@ -64,22 +106,23 @@ void BasicPointRenderer::init()
 
 void BasicPointRenderer::initPoints()
 {
-	LASreadOpener* las_read_opener = new LASreadOpener();
-	LASreader* las_reader = las_read_opener->open("res/point_clouds/cube.ply");
+	{
+		LASreadOpener* las_read_opener = new LASreadOpener();
+		LASreader* las_reader = las_read_opener->open(m_point_cloud_path.c_str());
 
+		while (las_reader->read_point()) {
+			LASpoint& point = las_reader->point;
 
-	while (las_reader->read_point()) {
-		LASpoint point = las_reader->point;
+			F64 x = las_reader->get_x();
+			F64 y = las_reader->get_y();
+			F64 z = las_reader->get_z();
 
-		F64 x = las_reader->get_x();
-		F64 y = las_reader->get_y();
-		F64 z = las_reader->get_z();
+			F64 r = point.get_R() / 256.0f;
+			F64 g = point.get_G() / 256.0f;
+			F64 b = point.get_B() / 256.0f;
 
-		F64 r = point.get_R();
-		F64 g = point.get_G();
-		F64 b = point.get_B();
-
-		m_point_renderer.addPointAt({ x, y, z }, { r, g, b });
+			m_point_renderer.addPointAt({ x, y, z }, { r, g, b });
+		}
 	}
 
 	m_point_renderer.init();
@@ -97,6 +140,14 @@ void BasicPointRenderer::initTestCube()
 	m_cube_renderer.addCubeAt(glm::vec3( 0.0f,  5.0f, 0.0f));
 
 	m_cube_renderer.init();
+}
+
+void BasicPointRenderer::handleMouse()
+{
+	if (m_flying_mode) {
+		handleMouseMovement();
+	}
+	handleMouseSceneFocus();
 }
 
 void BasicPointRenderer::handleMouseMovement()
@@ -134,7 +185,22 @@ void BasicPointRenderer::handleMouseMovement()
 	m_camera.updateMatrix();
 }
 
+void BasicPointRenderer::handleMouseSceneFocus()
+{
+	if (m_mouse->isRightButtonPressed()) {
+		setFlyingMode(true);
+	}
+}
+
 void BasicPointRenderer::handleKeyboard(const float& dt)
+{
+	if (m_flying_mode) {
+		handleKeyboardMovement(dt);
+	}
+	handleKeyboardSceneFocus();
+}
+
+void BasicPointRenderer::handleKeyboardMovement(const float& dt)
 {
 	if (m_keyboard->isKeyPressed(KeyCode::KEY_W)) {
 		m_camera.position() += dt * m_movement_speed * m_camera.front();
@@ -151,5 +217,22 @@ void BasicPointRenderer::handleKeyboard(const float& dt)
 	if (m_keyboard->isKeyPressed(KeyCode::KEY_D)) {
 		m_camera.position() += dt * glm::normalize(glm::cross(m_camera.front(), m_camera.up())) * m_movement_speed;
 		m_camera.updateMatrix();
+	}
+}
+
+void BasicPointRenderer::handleKeyboardSceneFocus()
+{
+	if (m_keyboard->isKeyPressed(KeyCode::KEY_ESCAPE)) {
+		setFlyingMode(false);
+	}
+}
+
+void BasicPointRenderer::setFlyingMode(const bool& value)
+{
+	m_flying_mode = value;
+	if (m_flying_mode) {
+		getWindow().setCursorFocused(true);
+	} else {
+		getWindow().setCursorFocused(false);
 	}
 }

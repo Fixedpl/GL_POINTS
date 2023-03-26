@@ -22,9 +22,9 @@ m_window(window),
 m_cursor_pos(0.0f)
 {
 	// LMB
-	m_button_states[1] = false;
+	m_button_states[0] = false;
 	// RMB
-	m_button_states[2] = false;
+	m_button_states[1] = false;
 
 	glfwSetMouseButtonCallback(window.getNative(), mouseButtonCallback);
 	glfwSetCursorPosCallback(window.getNative(), cursorPositionCallback);
@@ -32,12 +32,12 @@ m_cursor_pos(0.0f)
 
 bool MouseInput::isLeftButtonPressed()
 {
-	return m_button_states[1];
+	return m_button_states[0];
 }
 
 bool MouseInput::isRightButtonPressed()
 {
-	return m_button_states[2];
+	return m_button_states[1];
 }
 
 const glm::vec2& MouseInput::getLastCursorPosition() const

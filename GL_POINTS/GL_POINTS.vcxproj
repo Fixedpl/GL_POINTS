@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLEW\include\;$(ProjectDir)src\vendor\;$(SolutionDir)Dependencies\LASlib\include\;$(SolutionDir)Dependencies\GLFW\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\vendor\imgui;$(SolutionDir)Dependencies\GLEW\include\;$(ProjectDir)src\vendor\;$(SolutionDir)Dependencies\LASlib\include\;$(SolutionDir)Dependencies\GLFW\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,12 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\PointCloudHelper.cpp" />
     <ClCompile Include="src\PointRenderer.cpp" />
     <ClCompile Include="src\CubeRenderer.cpp" />
     <ClCompile Include="src\BasicPointRenderer.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\KeyboardInput.cpp" />
     <ClCompile Include="src\MouseInput.cpp" />
     <ClCompile Include="src\OpenGL\GL_Context.cpp" />
@@ -151,9 +152,12 @@
     <ClCompile Include="src\vendor\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\vendor\implot\implot.cpp" />
+    <ClCompile Include="src\vendor\implot\implot_items.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\PointCloudHelper.h" />
     <ClInclude Include="src\PointRenderer.h" />
     <ClInclude Include="src\CubeRenderer.h" />
     <ClInclude Include="src\BasicPointRenderer.h" />
@@ -460,6 +464,8 @@
     <ClInclude Include="src\vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\vendor\implot\implot.h" />
+    <ClInclude Include="src\vendor\implot\implot_internal.h" />
     <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>

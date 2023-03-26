@@ -22,6 +22,8 @@ protected:
 
 	virtual void onImGuiUpdate() {};
 
+	Window& getWindow();
+
 private:
 
 	void loop();

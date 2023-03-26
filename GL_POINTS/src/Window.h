@@ -48,6 +48,8 @@ public:
 
 	void setVSync(const bool& value);
 
+	void setCursorFocused(const bool& value);
+
 	bool isRunning() const;
 
 	void swapBuffers();

@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <imgui/imgui_impl_glfw.h>
+#include <implot/implot.h>
 
 #include "OpenGL/GL_Renderer.h"
 #include "OpenGL/GL_Context.h"
@@ -31,6 +32,11 @@ m_window(window_settings)
 void Application::run()
 {
 	loop();
+}
+
+Window& Application::getWindow()
+{
+	return m_window;
 }
 
 void Application::loop()
@@ -66,6 +72,7 @@ void Application::imGuiInit()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(m_window.getNative(), true);
@@ -95,5 +102,6 @@ void Application::imGuiShutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 }

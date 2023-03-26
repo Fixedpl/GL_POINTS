@@ -73,7 +73,7 @@ void Window::create()
 	glfwMakeContextCurrent(m_window);
 	setVSync(m_window_settings.v_sync);
 
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	setCursorFocused(true);
 
 	glfwSetWindowUserPointer(m_window, this);
 
@@ -89,6 +89,12 @@ void Window::setVSync(const bool& value)
 		glfwSwapInterval(1);
 	else
 		glfwSwapInterval(0);
+}
+
+void Window::setCursorFocused(const bool& value)
+{
+	int glfw_cursor_focused = value ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+	glfwSetInputMode(m_window, GLFW_CURSOR, glfw_cursor_focused);
 }
 
 bool Window::isRunning() const

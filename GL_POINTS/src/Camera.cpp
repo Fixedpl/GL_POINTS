@@ -2,10 +2,13 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-PerspectiveCamera::PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position)
+PerspectiveCamera::PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position, const float& fov)
 {
-    m_perspective_matrix = glm::perspective(glm::radians(60.0f), window_width / window_height, 0.1f, 100.0f);
+    m_window_width = window_width;
+    m_window_height = window_height;
+    m_fov = fov;
     m_position = position;
+    updatePerspectiveMatrix();
     updateMatrix();
 }
 
@@ -37,6 +40,16 @@ glm::vec3 &PerspectiveCamera::front()
 glm::vec3 &PerspectiveCamera::up()
 {
     return m_up;
+}
+
+float& PerspectiveCamera::fov()
+{
+    return m_fov;
+}
+
+void PerspectiveCamera::updatePerspectiveMatrix()
+{
+    m_perspective_matrix = glm::perspective(glm::radians(m_fov), m_window_width / m_window_height, 0.1f, 100.0f);
 }
 
 void PerspectiveCamera::updateMatrix()
