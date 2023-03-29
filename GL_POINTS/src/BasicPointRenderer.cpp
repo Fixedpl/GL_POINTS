@@ -2,6 +2,14 @@
 
 #include "OpenGL/GL_Renderer.h"
 
+BasicPointRenderer::~BasicPointRenderer()
+{
+	delete m_points_vao;
+	delete m_points_vbo;
+	delete m_points_layout;
+	delete m_shader;
+}
+
 void BasicPointRenderer::addPointAt(const glm::vec3& pos)
 {
 	m_points.push_back({ pos, m_default_color });
@@ -14,7 +22,7 @@ void BasicPointRenderer::addPointAt(const glm::vec3& pos, const glm::vec3& color
 
 void BasicPointRenderer::init()
 {
-	m_shader->loadShader("res/shaders/GL_POINTS_v.glsl", "res/shaders/GL_POINTS_f.glsl");
+	m_shader = new OpenGL::Shader("res/shaders/GL_POINTS_v.glsl", "res/shaders/GL_POINTS_f.glsl");
 	m_shader->bind();
 
 	m_points_vao = new OpenGL::VertexArray();

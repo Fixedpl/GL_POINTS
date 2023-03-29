@@ -33,7 +33,8 @@ PointCloudApplication::PointCloudApplication(WindowSettings window_settings,
 	),
 	m_fps_data(m_seconds_measured / m_polling_rate),
 	m_tick(0),
-	m_point_cloud_path(point_cloud_path)
+	m_point_cloud_path(point_cloud_path),
+	m_cs_point_renderer(window_settings.width, window_settings.height)
 {
 }
 
@@ -52,9 +53,9 @@ void PointCloudApplication::onEvent(const float& delta)
 void PointCloudApplication::onUpdate(const float& dt)
 {
 	m_time_elapsed += dt;
-	m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
-	m_cube_renderer.render();
-	//m_point_renderer.render();
+	m_cs_point_renderer.render();
+	//m_cube_renderer.render();
+	//m_basic_renderer.render();
 }
 
 void PointCloudApplication::onImGuiUpdate()
@@ -91,14 +92,15 @@ void PointCloudApplication::init()
 {
 	setFlyingMode(false);
 
-	m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
+	// m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
 
 	m_first_mouse_move = true;
 
-	initTestCube();
+	//initTestCube();
 
 	//initPoints();
 
+	m_cs_point_renderer.init();
 }
 
 void PointCloudApplication::initPoints()
@@ -118,11 +120,11 @@ void PointCloudApplication::initPoints()
 			F64 g = point.get_G() / 256.0f;
 			F64 b = point.get_B() / 256.0f;
 
-			m_point_renderer.addPointAt({ x, y, z }, { r, g, b });
+			m_basic_renderer.addPointAt({ x, y, z }, { r, g, b });
 		}
 	}
 
-	m_point_renderer.init();
+	m_basic_renderer.init();
 }
 
 void PointCloudApplication::initTestCube()

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "CubeRenderer.h"
 #include "BasicPointRenderer.h"
+#include "ComputeShaderPointRenderer.h"
 
 
 class FPSData
@@ -118,7 +119,8 @@ private:
 	float m_yaw;
 	float m_pitch;
 
-	BasicPointRenderer m_point_renderer;
+	BasicPointRenderer m_basic_renderer;
+	ComputeShaderPointRenderer m_cs_point_renderer;
 	CubeRenderer m_cube_renderer;
 
 	const float m_seconds_measured = 2.0f;

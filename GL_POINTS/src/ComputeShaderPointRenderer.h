@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+#include "OpenGL/GL_VertexBuffer.h"
 #include "OpenGL/GL_Shader.h"
 #include "OpenGL/GL_ComputeShader.h"
 
@@ -13,6 +14,7 @@ class ComputeShaderPointRenderer
 public:
 
 	ComputeShaderPointRenderer(const uint32_t& screen_width, const uint32_t& screen_height);
+	~ComputeShaderPointRenderer();
 
 	void addPointAt(const glm::vec3& pos);
 	void addPointAt(const glm::vec3& pos, const glm::vec3& color);
@@ -32,6 +34,10 @@ private:
 
 	OpenGL::Shader* m_texture_shader;
 	OpenGL::ComputeShader* m_compute_shader;
+
+	OpenGL::VertexArray* m_tex_quad_vao;
+	OpenGL::VertexBuffer* m_tex_quad_vbo;
+	OpenGL::BufferLayout* m_tex_quad_layout;
 
 };
 

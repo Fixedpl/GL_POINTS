@@ -15,6 +15,7 @@ OpenGL::ComputeShader::ComputeShader()
 OpenGL::ComputeShader::ComputeShader(const std::string& path)
 {
 	m_id = glCreateProgram();
+	loadShader(path);
 }
 
 OpenGL::ComputeShader::~ComputeShader()
@@ -48,6 +49,16 @@ void OpenGL::ComputeShader::loadShader(const std::string& path)
 	glDeleteShader(cs);
 }
 
+void OpenGL::ComputeShader::setUniform1i(const std::string& name, const int32_t& value)
+{
+	int32_t location = getUniformLocation(name);
+	if (location == -1) {
+		std::cout << "[ERROR][SHADER] Couldn't find uniform: " << name << std::endl;
+		return;
+	}
+	glUniform1i(location, value);
+}
+
 uint32_t OpenGL::ComputeShader::createShader(const std::string& path, const int32_t& type)
 {
 	const char* shaderSource = nullptr;
@@ -78,4 +89,9 @@ uint32_t OpenGL::ComputeShader::createShader(const std::string& path, const int3
 		std::cout << "[ERROR][SHADER] Failed to compile with error: " << msg << std::endl;
 	}
 	return shader;
+}
+
+int32_t OpenGL::ComputeShader::getUniformLocation(const std::string& name)
+{
+	return glGetUniformLocation(m_id, name.c_str());
 }

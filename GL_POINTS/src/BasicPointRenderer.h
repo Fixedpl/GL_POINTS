@@ -13,6 +13,8 @@ class BasicPointRenderer
 {
 public:
 
+	~BasicPointRenderer();
+
 	void addPointAt(const glm::vec3& pos);
 	void addPointAt(const glm::vec3& pos, const glm::vec3& color);
 
