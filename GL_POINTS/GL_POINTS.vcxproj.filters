@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\PointRenderer.cpp" />
-    <ClCompile Include="src\CubeRenderer.cpp" />
     <ClCompile Include="src\BasicPointRenderer.cpp" />
+    <ClCompile Include="src\CubeRenderer.cpp" />
+    <ClCompile Include="src\PointCloudApplication.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\KeyboardInput.cpp" />
@@ -26,11 +26,13 @@
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\PointCloudHelper.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\OpenGL\GL_ComputeShader.cpp" />
+    <ClCompile Include="src\ComputeShaderPointRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\PointRenderer.h" />
-    <ClInclude Include="src\CubeRenderer.h" />
     <ClInclude Include="src\BasicPointRenderer.h" />
+    <ClInclude Include="src\CubeRenderer.h" />
+    <ClInclude Include="src\PointCloudApplication.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\InputCodes.h" />
@@ -338,10 +340,13 @@
     <ClInclude Include="src\vendor\implot\implot_internal.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\PointCloudHelper.h" />
+    <ClInclude Include="src\OpenGL\GL_ComputeShader.h" />
+    <ClInclude Include="src\ComputeShaderPointRenderer.h" />
+    <ClInclude Include="src\PointData.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\f.glsl" />
-    <None Include="res\shaders\v.glsl" />
+    <None Include="res\shaders\GL_POINTS_f.glsl" />
+    <None Include="res\shaders\GL_POINTS_v.glsl" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
@@ -478,5 +483,8 @@
     <None Include="src\vendor\glm\gtx\vector_angle.inl" />
     <None Include="src\vendor\glm\gtx\vector_query.inl" />
     <None Include="src\vendor\glm\gtx\wrap.inl" />
+    <None Include="res\shaders\Compute_shader_c.glsl" />
+    <None Include="res\shaders\Compute_shader_v.glsl" />
+    <None Include="res\shaders\Compute_shader_f.glsl" />
   </ItemGroup>
 </Project>

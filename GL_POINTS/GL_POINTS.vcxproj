@@ -130,11 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ComputeShaderPointRenderer.cpp" />
+    <ClCompile Include="src\OpenGL\GL_ComputeShader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PointCloudHelper.cpp" />
-    <ClCompile Include="src\PointRenderer.cpp" />
-    <ClCompile Include="src\CubeRenderer.cpp" />
     <ClCompile Include="src\BasicPointRenderer.cpp" />
+    <ClCompile Include="src\CubeRenderer.cpp" />
+    <ClCompile Include="src\PointCloudApplication.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\KeyboardInput.cpp" />
@@ -157,10 +159,13 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\PointData.h" />
+    <ClInclude Include="src\ComputeShaderPointRenderer.h" />
+    <ClInclude Include="src\OpenGL\GL_ComputeShader.h" />
     <ClInclude Include="src\PointCloudHelper.h" />
-    <ClInclude Include="src\PointRenderer.h" />
-    <ClInclude Include="src\CubeRenderer.h" />
     <ClInclude Include="src\BasicPointRenderer.h" />
+    <ClInclude Include="src\CubeRenderer.h" />
+    <ClInclude Include="src\PointCloudApplication.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\InputCodes.h" />
@@ -469,8 +474,11 @@
     <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\f.glsl" />
-    <None Include="res\shaders\v.glsl" />
+    <None Include="res\shaders\Compute_shader_c.glsl" />
+    <None Include="res\shaders\Compute_shader_f.glsl" />
+    <None Include="res\shaders\Compute_shader_v.glsl" />
+    <None Include="res\shaders\GL_POINTS_f.glsl" />
+    <None Include="res\shaders\GL_POINTS_v.glsl" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
