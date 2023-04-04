@@ -5,11 +5,11 @@
 
 #include "PointCloudApplication.h"
 
-#include "EmptyPointRenderer.h"
-#include "GLPointsRenderer.h"
-#include "CSBasicRenderer.h"
-#include "CSZBufferRenderer.h"
-#include "CSEarlyZRenderer.h"
+#include "Renderers/EmptyPointRenderer.h"
+#include "Renderers/GLPointsRenderer.h"
+#include "Renderers/CSBasicRenderer.h"
+#include "Renderers/CSZBufferRenderer.h"
+#include "Renderers/CSEarlyZRenderer.h"
 
 
 PointCloudTestingEnv::PointCloudTestingEnv(PointCloudApplication* app, 
@@ -41,6 +41,8 @@ PointCloudTestingEnv::~PointCloudTestingEnv()
 
 void PointCloudTestingEnv::init()
 {
+	m_flying_mode = false;
+
 	glm::vec2 screen_size = m_app->getWindowSize();
 
 	m_render_methods = {
@@ -70,18 +72,19 @@ void PointCloudTestingEnv::onImGuiUpdate()
 		m_on_close();
 	}
 
-	ImGui::BeginListBox("Method");
-	for (auto& method : m_render_methods) {
-		if (ImGui::Selectable(method.label.c_str())) {
-			m_current_renderer->cleanup();
+	if (ImGui::BeginListBox("Method")) {
+		for (auto& method : m_render_methods) {
+			if (ImGui::Selectable(method.label.c_str())) {
+				m_current_renderer->cleanup();
 
-			PointRenderer* selected = method.renderer;
-			selected->init(m_point_cloud);
-			m_current_renderer = selected;
+				PointRenderer* selected = method.renderer;
+				selected->init(m_point_cloud);
+				m_current_renderer = selected;
+			}
 		}
+		ImGui::EndListBox();
 	}
-	ImGui::EndListBox();
-
+	
 	imGuiFps();
 
 	ImGui::End();
@@ -122,6 +125,14 @@ void PointCloudTestingEnv::handleMouseMovement()
 	m_camera->updateMatrix();
 }
 
+void PointCloudTestingEnv::handleMouseSceneFocus()
+{
+	if (m_app->getMouse()->isRightButtonPressed()) {
+		m_app->hideCursor(true);
+		m_flying_mode = true;
+	}
+}
+
 void PointCloudTestingEnv::handleKeyboardMovement(const float& dt)
 {
 	if (m_app->getKeyboard()->isKeyPressed(KeyCode::KEY_W)) {
@@ -139,6 +150,14 @@ void PointCloudTestingEnv::handleKeyboardMovement(const float& dt)
 	if (m_app->getKeyboard()->isKeyPressed(KeyCode::KEY_D)) {
 		m_camera->position() += dt * glm::normalize(glm::cross(m_camera->front(), m_camera->up())) * m_movement_speed;
 		m_camera->updateMatrix();
+	}
+}
+
+void PointCloudTestingEnv::handleKeyboardSceneFocus()
+{
+	if (m_app->getKeyboard()->isKeyPressed(KeyCode::KEY_ESCAPE)) {
+		m_app->hideCursor(false);
+		m_flying_mode = false;
 	}
 }
 
@@ -169,6 +188,10 @@ void PointCloudTestingEnv::imGuiFps()
 
 void PointCloudTestingEnv::onEvent(const float& dt)
 {
-	handleMouseMovement();
-	handleKeyboardMovement(dt);
+	handleMouseSceneFocus();
+	handleKeyboardSceneFocus();
+	if (m_flying_mode) {
+		handleMouseMovement();
+		handleKeyboardMovement(dt);
+	}
 }

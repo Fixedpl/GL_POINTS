@@ -13,7 +13,7 @@
 #include "Core/KeyboardInput.h"
 
 #include "PointCloudHelper.h"
-#include "EmptyPointRenderer.h"
+#include "Renderers/EmptyPointRenderer.h"
 
 
 
@@ -44,10 +44,6 @@ void PointCloudApplication::beforeUpdate()
 
 void PointCloudApplication::onEvent(const float& delta)
 {
-	handleMouse();
-
-	handleKeyboard(delta);
-
 	if (!m_menu_screen_view) {
 		m_testing_env->onEvent(delta);
 	}
@@ -85,6 +81,7 @@ void PointCloudApplication::onImGuiUpdate()
 	} else {
 		m_testing_env->onImGuiUpdate();
 		if (m_test_env_close_request) {
+			m_test_env_close_request = false;
 			handleTestEnvClose();
 		}
 	}
@@ -113,30 +110,6 @@ void PointCloudApplication::loadPoints(const std::string& path)
 void PointCloudApplication::init()
 {
 	hideCursor(false);
-}
-
-void PointCloudApplication::handleMouse()
-{
-	handleMouseSceneFocus();
-}
-
-void PointCloudApplication::handleMouseSceneFocus()
-{
-	if (m_mouse->isRightButtonPressed()) {
-		hideCursor(true);
-	}
-}
-
-void PointCloudApplication::handleKeyboard(const float& dt)
-{
-	handleKeyboardSceneFocus();
-}
-
-void PointCloudApplication::handleKeyboardSceneFocus()
-{
-	if (m_keyboard->isKeyPressed(KeyCode::KEY_ESCAPE)) {
-		hideCursor(false);
-	}
 }
 
 void PointCloudApplication::hideCursor(const bool& value)

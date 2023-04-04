@@ -13,36 +13,6 @@ ComputeShaderPointRenderer::ComputeShaderPointRenderer(const uint32_t& screen_wi
 
 }
 
-void ComputeShaderPointRenderer::init(const std::vector<PointData>& point_data)
-{
-	prepareComputeShader();
-	preparePointsSSBO(point_data);
-	prepareDepthSSBO();
-	prepareTextureBuffers();
-}
-
-void ComputeShaderPointRenderer::render(const glm::mat4& mvp)
-{
-	executeComputeShader(mvp);
-	renderAndClearTexture();
-	clearDepthBuffer();
-}
-
-void ComputeShaderPointRenderer::cleanup()
-{
-	cleanupPointsSSBO();
-	cleanupDepthSSBO();
-	cleanupTextureBuffers();
-	cleanupComputeShader();
-}
-
-void ComputeShaderPointRenderer::prepareComputeShader()
-{
-	m_compute_shader = new OpenGL::ComputeShader("res/shaders/Compute_shader_early_z_c.glsl");
-	m_compute_shader->bind();
-	m_compute_shader->setUniform2i("u_image_size", glm::vec2(m_screen_width, m_screen_height));
-}
-
 void ComputeShaderPointRenderer::preparePointsSSBO(const std::vector<PointData>& point_data)
 {
 	uint32_t point_count = point_data.size();
@@ -92,7 +62,6 @@ void ComputeShaderPointRenderer::prepareTextureBuffers()
 	m_tex_quad_vbo = new OpenGL::VertexBuffer(sizeof(float) * 6 * 5, DrawType::STATIC);
 	m_tex_quad_layout = new OpenGL::BufferLayout();
 	m_tex_quad_layout->addAttribute<float>(3);
-
 	m_tex_quad_layout->addAttribute<float>(2);
 
 	m_tex_quad_vao->addVertexBuffer(m_tex_quad_vbo);

@@ -9,8 +9,9 @@
 #include "Core/KeyboardInput.h"
 #include "Core/MouseInput.h"
 
+#include "Renderers/PointRenderer.h"
+
 #include "PointData.h"
-#include "PointRenderer.h"
 
 
 class PointCloudApplication;
@@ -95,7 +96,10 @@ private:
 	void init();
 
 	void handleMouseMovement();
+	void handleMouseSceneFocus();
+
 	void handleKeyboardMovement(const float& dt);
+	void handleKeyboardSceneFocus();
 
 	void imGuiFps();
 
@@ -110,9 +114,7 @@ private:
 	uint32_t m_tick;
 	FPSData m_fps_data;
 
-	const bool m_default_flying_mode = true;
 	bool m_flying_mode;
-
 
 	glm::vec3 m_starting_camera_pos;
 	PerspectiveCamera* m_camera;

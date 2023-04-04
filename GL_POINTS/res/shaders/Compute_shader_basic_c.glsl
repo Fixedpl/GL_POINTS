@@ -21,7 +21,7 @@ layout(std430, binding = 3) buffer pointsLayout
 };
 
 uniform mat4 u_MVP;
-uniform vec2 u_image_size;
+uniform ivec2 u_image_size;
 
 void main() 
 {
@@ -31,7 +31,7 @@ void main()
     vec4 pos = u_MVP * vec4(points[idx].x, points[idx].y, points[idx].z, 1.0);
     pos.xyz = pos.xyz / pos.w;
 
-    if (pos.w <= 0.0 || pos.x < -1.0 || pos.x > 1.0 || pos.y < -1.0 || pos.y > 1.0) {
+    if (pos.x < -1.0 || pos.x > 1.0 || pos.y < -1.0 || pos.y > 1.0 || pos.w <= 0.0) {
         return;
     }
 

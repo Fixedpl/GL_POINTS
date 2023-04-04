@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\GLPointsRenderer.cpp" />
+    <ClCompile Include="src\Renderers\GLPointsRenderer.cpp" />
     <ClCompile Include="src\PointCloudApplication.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Camera.cpp" />
@@ -26,16 +26,16 @@
     <ClCompile Include="src\PointCloudHelper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OpenGL\GL_ComputeShader.cpp" />
-    <ClCompile Include="src\ComputeShaderPointRenderer.cpp" />
-    <ClCompile Include="src\PointRenderer.cpp" />
-    <ClCompile Include="src\EmptyPointRenderer.cpp" />
+    <ClCompile Include="src\Renderers\ComputeShaderPointRenderer.cpp" />
+    <ClCompile Include="src\Renderers\PointRenderer.cpp" />
+    <ClCompile Include="src\Renderers\EmptyPointRenderer.cpp" />
     <ClCompile Include="src\PointCloudTestingEnv.cpp" />
-    <ClCompile Include="src\CSBasicRenderer.cpp" />
-    <ClCompile Include="src\CSZBufferRenderer.cpp" />
-    <ClCompile Include="src\CSEarlyZRenderer.cpp" />
+    <ClCompile Include="src\Renderers\CSBasicRenderer.cpp" />
+    <ClCompile Include="src\Renderers\CSZBufferRenderer.cpp" />
+    <ClCompile Include="src\Renderers\CSEarlyZRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\GLPointsRenderer.h" />
+    <ClInclude Include="src\Renderers\GLPointsRenderer.h" />
     <ClInclude Include="src\PointCloudApplication.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Camera.h" />
@@ -345,14 +345,14 @@
     <ClInclude Include="src\Core\Window.h" />
     <ClInclude Include="src\PointCloudHelper.h" />
     <ClInclude Include="src\OpenGL\GL_ComputeShader.h" />
-    <ClInclude Include="src\ComputeShaderPointRenderer.h" />
+    <ClInclude Include="src\Renderers\ComputeShaderPointRenderer.h" />
     <ClInclude Include="src\PointData.h" />
-    <ClInclude Include="src\PointRenderer.h" />
-    <ClInclude Include="src\EmptyPointRenderer.h" />
+    <ClInclude Include="src\Renderers\PointRenderer.h" />
+    <ClInclude Include="src\Renderers\EmptyPointRenderer.h" />
     <ClInclude Include="src\PointCloudTestingEnv.h" />
-    <ClInclude Include="src\CSBasicRenderer.h" />
-    <ClInclude Include="src\CSZBufferRenderer.h" />
-    <ClInclude Include="src\CSEarlyZRenderer.h" />
+    <ClInclude Include="src\Renderers\CSBasicRenderer.h" />
+    <ClInclude Include="src\Renderers\CSZBufferRenderer.h" />
+    <ClInclude Include="src\Renderers\CSEarlyZRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\GL_POINTS_f.glsl" />

@@ -35,21 +35,15 @@ public:
 
 	glm::vec2 getWindowSize();
 
+	void hideCursor(const bool& value);
+
 private:
 
 	void loadPoints(const std::string& path);
 
 	void init();
 
-	void handleMouse();
-	void handleMouseSceneFocus();
-
-	void handleKeyboard(const float& dt);
-	void handleKeyboardSceneFocus();
-
 	void handleTestEnvClose();
-
-	void hideCursor(const bool& value);
 
 private:
 
