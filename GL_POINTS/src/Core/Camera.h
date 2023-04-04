@@ -12,7 +12,7 @@ class PerspectiveCamera : public Camera
 {
 public:
 
-    PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position, const float& fov);
+    PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position);
 
     const glm::mat4& matrix();
     glm::mat4& viewMatrix();
