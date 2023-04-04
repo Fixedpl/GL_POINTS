@@ -49,6 +49,16 @@ void OpenGL::ComputeShader::loadShader(const std::string& path)
 	glDeleteShader(cs);
 }
 
+void OpenGL::ComputeShader::setUniformMat4f(const std::string& name, const glm::mat4& matrix)
+{
+	int32_t location = getUniformLocation(name);
+	if (location == -1) {
+		std::cout << "[ERROR][SHADER] Couldn't find uniform: " << name << std::endl;
+		return;
+	}
+	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+}
+
 void OpenGL::ComputeShader::setUniform1i(const std::string& name, const int32_t& value)
 {
 	int32_t location = getUniformLocation(name);
@@ -57,6 +67,26 @@ void OpenGL::ComputeShader::setUniform1i(const std::string& name, const int32_t&
 		return;
 	}
 	glUniform1i(location, value);
+}
+
+void OpenGL::ComputeShader::setUniform1ui(const std::string& name, const uint32_t& value)
+{
+	int32_t location = getUniformLocation(name);
+	if (location == -1) {
+		std::cout << "[ERROR][SHADER] Couldn't find uniform: " << name << std::endl;
+		return;
+	}
+	glUniform1ui(location, value);
+}
+
+void OpenGL::ComputeShader::setUniform2i(const std::string& name, const glm::vec2& value)
+{
+	int32_t location = getUniformLocation(name);
+	if (location == -1) {
+		std::cout << "[ERROR][SHADER] Couldn't find uniform: " << name << std::endl;
+		return;
+	}
+	glUniform2i(location, value.x, value.y);
 }
 
 uint32_t OpenGL::ComputeShader::createShader(const std::string& path, const int32_t& type)

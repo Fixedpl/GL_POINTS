@@ -2,12 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\BasicPointRenderer.cpp" />
-    <ClCompile Include="src\CubeRenderer.cpp" />
     <ClCompile Include="src\PointCloudApplication.cpp" />
-    <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\KeyboardInput.cpp" />
-    <ClCompile Include="src\MouseInput.cpp" />
+    <ClCompile Include="src\Core\Application.cpp" />
+    <ClCompile Include="src\Core\Camera.cpp" />
+    <ClCompile Include="src\Core\KeyboardInput.cpp" />
+    <ClCompile Include="src\Core\MouseInput.cpp" />
     <ClCompile Include="src\OpenGL\GL_Context.cpp" />
     <ClCompile Include="src\OpenGL\GL_IndexBuffer.cpp" />
     <ClCompile Include="src\OpenGL\GL_Renderer.cpp" />
@@ -23,21 +22,23 @@
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\vendor\implot\implot.cpp" />
     <ClCompile Include="src\vendor\implot\implot_items.cpp" />
-    <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\Core\Window.cpp" />
     <ClCompile Include="src\PointCloudHelper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OpenGL\GL_ComputeShader.cpp" />
     <ClCompile Include="src\ComputeShaderPointRenderer.cpp" />
+    <ClCompile Include="src\PointRenderer.cpp" />
+    <ClCompile Include="src\EmptyPointRenderer.cpp" />
+    <ClCompile Include="src\PointCloudTestingEnv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicPointRenderer.h" />
-    <ClInclude Include="src\CubeRenderer.h" />
     <ClInclude Include="src\PointCloudApplication.h" />
-    <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\InputCodes.h" />
-    <ClInclude Include="src\KeyboardInput.h" />
-    <ClInclude Include="src\MouseInput.h" />
+    <ClInclude Include="src\Core\Application.h" />
+    <ClInclude Include="src\Core\Camera.h" />
+    <ClInclude Include="src\Core\InputCodes.h" />
+    <ClInclude Include="src\Core\KeyboardInput.h" />
+    <ClInclude Include="src\Core\MouseInput.h" />
     <ClInclude Include="src\OpenGL\GL_Context.h" />
     <ClInclude Include="src\OpenGL\GL_DrawTypeEnum.h" />
     <ClInclude Include="src\OpenGL\GL_gl.h" />
@@ -338,11 +339,14 @@
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="src\vendor\implot\implot.h" />
     <ClInclude Include="src\vendor\implot\implot_internal.h" />
-    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Core\Window.h" />
     <ClInclude Include="src\PointCloudHelper.h" />
     <ClInclude Include="src\OpenGL\GL_ComputeShader.h" />
     <ClInclude Include="src\ComputeShaderPointRenderer.h" />
     <ClInclude Include="src\PointData.h" />
+    <ClInclude Include="src\PointRenderer.h" />
+    <ClInclude Include="src\EmptyPointRenderer.h" />
+    <ClInclude Include="src\PointCloudTestingEnv.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\GL_POINTS_f.glsl" />
@@ -483,8 +487,10 @@
     <None Include="src\vendor\glm\gtx\vector_angle.inl" />
     <None Include="src\vendor\glm\gtx\vector_query.inl" />
     <None Include="src\vendor\glm\gtx\wrap.inl" />
-    <None Include="res\shaders\Compute_shader_c.glsl" />
     <None Include="res\shaders\Compute_shader_v.glsl" />
     <None Include="res\shaders\Compute_shader_f.glsl" />
+    <None Include="res\shaders\Compute_shader_basic_c.glsl" />
+    <None Include="res\shaders\Compute_shader_z_buffer_c.glsl" />
+    <None Include="res\shaders\Compute_shader_early_z_c.glsl" />
   </ItemGroup>
 </Project>

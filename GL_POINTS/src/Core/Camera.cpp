@@ -2,11 +2,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-PerspectiveCamera::PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position, const float& fov)
+PerspectiveCamera::PerspectiveCamera(const float& window_width, const float& window_height, const glm::vec3& position)
 {
     m_window_width = window_width;
     m_window_height = window_height;
-    m_fov = fov;
+    m_fov = 60.0f;
     m_position = position;
     updatePerspectiveMatrix();
     updateMatrix();

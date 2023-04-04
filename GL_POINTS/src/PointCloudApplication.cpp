@@ -1,41 +1,40 @@
 #include "PointCloudApplication.h"
 
 #include <imgui/imgui.h>
-#include <implot/implot.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <fstream>
-
-#include "PointCloudHelper.h"
 
 #include "lasreader.hpp"
 #include "laswriter.hpp"
 
 #include "OpenGL/GL_Renderer.h"
 
-#include "MouseInput.h"
-#include "KeyboardInput.h"
+#include "Core/MouseInput.h"
+#include "Core/KeyboardInput.h"
+
+#include "PointCloudHelper.h"
+#include "EmptyPointRenderer.h"
+
+
+
+
 
 
 
 PointCloudApplication::PointCloudApplication(WindowSettings window_settings, 
-	const std::string& point_cloud_path, 
-	const glm::vec3& camera_pos)
+	const std::vector<PointCloudSetup>& setups)
 	: 
 	Application(window_settings),
-	m_fov(m_default_fov),
-	m_flying_mode(m_default_flying_mode),
-	m_time_elapsed(0.0f),
-	m_camera(
-		window_settings.width, 
-		window_settings.height, 
-		glm::vec3(0.0f),
-		m_fov
-	),
-	m_fps_data(m_seconds_measured / m_polling_rate),
-	m_tick(0),
-	m_point_cloud_path(point_cloud_path),
-	m_cs_point_renderer(window_settings.width, window_settings.height)
+	m_hide_cursor(false),
+	m_menu_screen_view(true),
+	m_setups(setups),
+	m_test_env_close_request(false)
 {
+}
+
+PointCloudApplication::~PointCloudApplication()
+{
+	delete m_testing_env;
 }
 
 void PointCloudApplication::beforeUpdate()
@@ -48,190 +47,126 @@ void PointCloudApplication::onEvent(const float& delta)
 	handleMouse();
 
 	handleKeyboard(delta);
+
+	if (!m_menu_screen_view) {
+		m_testing_env->onEvent(delta);
+	}
 }
 
 void PointCloudApplication::onUpdate(const float& dt)
 {
-	m_time_elapsed += dt;
-	m_cs_point_renderer.render();
-	//m_cube_renderer.render();
-	//m_basic_renderer.render();
+	if (!m_menu_screen_view) {
+		m_testing_env->onUpdate(dt);
+	}
 }
 
 void PointCloudApplication::onImGuiUpdate()
 {
-	float imgui_framerate = ImGui::GetIO().Framerate;
-	float ms_per_frame = 1000.0f / imgui_framerate;
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", ms_per_frame, imgui_framerate);
-	if (m_time_elapsed - (m_tick * m_polling_rate) >= m_polling_rate * (m_tick + 1)) {
-		m_fps_data.add(m_time_elapsed, ms_per_frame);
-		m_tick++;
-	}
+	if (m_menu_screen_view) {
+		ImGui::Begin("Choose point cloud");
 
-	if (ImPlot::BeginPlot("Line Plots", ImVec2(400, 200))) {
-		ImPlot::SetupAxes("FPS", "t");
-		ImPlot::SetupAxesLimits(
-			max(0.0f, m_time_elapsed - m_seconds_measured), 
-			max(m_seconds_measured - 2 * m_polling_rate, 
-				m_time_elapsed - 2 * m_polling_rate), 
-			0, 
-			30, 
-			ImPlotCond_Always
-		);
-		ImPlot::PlotLine("f(x)", m_fps_data.x(), m_fps_data.y(), m_fps_data.size(), ImPlotFlags_::ImPlotFlags_None, m_fps_data.offset());
-		ImPlot::EndPlot();
-	}
+		for (auto& setup : m_setups) {
+			if (ImGui::Button(setup.label.c_str())) {
+				loadPoints(setup.path);
+				m_menu_screen_view = false;
 
-	ImGui::SliderFloat("FOV", &m_fov, 0.0f, 120.0f);
-	m_camera.fov() = m_fov;
-	m_camera.updatePerspectiveMatrix();
-	m_camera.updateMatrix();
+				m_testing_env = new PointCloudTestingEnv(
+					this, 
+					m_point_cloud, 
+					setup.starting_camera_pos,
+					[this]() {
+						this->m_test_env_close_request = true;
+					}
+				);
+			}
+		}
+
+		ImGui::End();
+	} else {
+		m_testing_env->onImGuiUpdate();
+		if (m_test_env_close_request) {
+			handleTestEnvClose();
+		}
+	}
+}
+
+void PointCloudApplication::loadPoints(const std::string& path)
+{
+	LASreadOpener* las_read_opener = new LASreadOpener();
+	LASreader* las_reader = las_read_opener->open(path.c_str());
+
+	while (las_reader->read_point()) {
+		LASpoint& point = las_reader->point;
+
+		F64 x = las_reader->get_x();
+		F64 y = las_reader->get_y();
+		F64 z = las_reader->get_z();
+
+		F64 r = point.get_R() / 256.0f;
+		F64 g = point.get_G() / 256.0f;
+		F64 b = point.get_B() / 256.0f;
+
+		m_point_cloud.push_back(PointData({ x, y, z }, { r, g, b }));
+	}
 }
 
 void PointCloudApplication::init()
 {
-	setFlyingMode(false);
-
-	// m_shader.setUniformMat4f("u_MVP", m_camera.matrix());
-
-	m_first_mouse_move = true;
-
-	//initTestCube();
-
-	//initPoints();
-
-	m_cs_point_renderer.init();
-}
-
-void PointCloudApplication::initPoints()
-{
-	{
-		LASreadOpener* las_read_opener = new LASreadOpener();
-		LASreader* las_reader = las_read_opener->open(m_point_cloud_path.c_str());
-
-		while (las_reader->read_point()) {
-			LASpoint& point = las_reader->point;
-
-			F64 x = las_reader->get_x();
-			F64 y = las_reader->get_y();
-			F64 z = las_reader->get_z();
-
-			F64 r = point.get_R() / 256.0f;
-			F64 g = point.get_G() / 256.0f;
-			F64 b = point.get_B() / 256.0f;
-
-			m_basic_renderer.addPointAt({ x, y, z }, { r, g, b });
-		}
-	}
-
-	m_basic_renderer.init();
-}
-
-void PointCloudApplication::initTestCube()
-{
-	m_cube_renderer.addCubeAt(glm::vec3( 0.0f,  0.0f,  5.0f));
-	m_cube_renderer.addCubeAt(glm::vec3( 0.0f,  0.0f, -5.0f));
-
-	m_cube_renderer.addCubeAt(glm::vec3(-5.0f,  0.0f,  0.0f));
-	m_cube_renderer.addCubeAt(glm::vec3( 5.0f,  0.0f,  0.0f));
-
-	m_cube_renderer.addCubeAt(glm::vec3( 0.0f, -5.0f, 0.0f));
-	m_cube_renderer.addCubeAt(glm::vec3( 0.0f,  5.0f, 0.0f));
-
-	m_cube_renderer.init();
+	hideCursor(false);
 }
 
 void PointCloudApplication::handleMouse()
 {
-	if (m_flying_mode) {
-		handleMouseMovement();
-	}
 	handleMouseSceneFocus();
-}
-
-void PointCloudApplication::handleMouseMovement()
-{
-	glm::vec2 mouse_pos = m_mouse->getLastCursorPosition();
-	if (m_first_mouse_move)
-	{
-		m_last_mouse_pos = mouse_pos;
-		m_first_mouse_move = false;
-	}
-
-	glm::vec2 offset = glm::vec2(
-		mouse_pos.x - m_last_mouse_pos.x, 
-		m_last_mouse_pos.y - mouse_pos.y
-	);
-
-	m_last_mouse_pos = mouse_pos;
-
-	float sensitivity = 0.2f;
-	offset *= sensitivity;
-
-	m_yaw += offset.x;
-	m_pitch += offset.y;
-
-	if (m_pitch > 89.0f)
-		m_pitch = 89.0f;
-	if (m_pitch < -89.0f)
-		m_pitch = -89.0f;
-
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
-	direction.y = sin(glm::radians(m_pitch));
-	direction.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
-	m_camera.front() = glm::normalize(direction);
-	m_camera.updateMatrix();
 }
 
 void PointCloudApplication::handleMouseSceneFocus()
 {
 	if (m_mouse->isRightButtonPressed()) {
-		setFlyingMode(true);
+		hideCursor(true);
 	}
 }
 
 void PointCloudApplication::handleKeyboard(const float& dt)
 {
-	if (m_flying_mode) {
-		handleKeyboardMovement(dt);
-	}
 	handleKeyboardSceneFocus();
-}
-
-void PointCloudApplication::handleKeyboardMovement(const float& dt)
-{
-	if (m_keyboard->isKeyPressed(KeyCode::KEY_W)) {
-		m_camera.position() += dt * m_movement_speed * m_camera.front();
-		m_camera.updateMatrix();
-	}
-	if (m_keyboard->isKeyPressed(KeyCode::KEY_S)) {
-		m_camera.position() -= dt * m_movement_speed * m_camera.front();
-		m_camera.updateMatrix();
-	}
-	if (m_keyboard->isKeyPressed(KeyCode::KEY_A)) {
-		m_camera.position() -= dt * glm::normalize(glm::cross(m_camera.front(), m_camera.up())) * m_movement_speed;
-		m_camera.updateMatrix();
-	}
-	if (m_keyboard->isKeyPressed(KeyCode::KEY_D)) {
-		m_camera.position() += dt * glm::normalize(glm::cross(m_camera.front(), m_camera.up())) * m_movement_speed;
-		m_camera.updateMatrix();
-	}
 }
 
 void PointCloudApplication::handleKeyboardSceneFocus()
 {
 	if (m_keyboard->isKeyPressed(KeyCode::KEY_ESCAPE)) {
-		setFlyingMode(false);
+		hideCursor(false);
 	}
 }
 
-void PointCloudApplication::setFlyingMode(const bool& value)
+void PointCloudApplication::hideCursor(const bool& value)
 {
-	m_flying_mode = value;
-	if (m_flying_mode) {
+	m_hide_cursor = value;
+	if (m_hide_cursor) {
 		getWindow().setCursorFocused(true);
 	} else {
 		getWindow().setCursorFocused(false);
 	}
+}
+
+KeyboardInput* PointCloudApplication::getKeyboard()
+{
+	return m_keyboard;
+}
+
+MouseInput* PointCloudApplication::getMouse()
+{
+	return m_mouse;
+}
+
+glm::vec2 PointCloudApplication::getWindowSize()
+{
+	WindowSettings window_settings = getWindow().getWindowSettings();
+	return glm::vec2(window_settings.width, window_settings.height);
+}
+
+void PointCloudApplication::handleTestEnvClose()
+{
+	m_menu_screen_view = true;
+	delete m_testing_env;
 }

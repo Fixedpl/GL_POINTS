@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 
+#include <glm/glm.hpp>
 
 
 namespace OpenGL {
@@ -24,7 +25,10 @@ namespace OpenGL {
 
 		void loadShader(const std::string& path);
 
+		void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
 		void setUniform1i(const std::string& name, const int32_t& value);
+		void setUniform1ui(const std::string& name, const uint32_t& value);
+		void setUniform2i(const std::string& name, const glm::vec2& value);
 
 	private:
 

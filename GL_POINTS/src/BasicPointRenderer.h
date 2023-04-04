@@ -7,26 +7,24 @@
 #include "OpenGL/GL_VertexBuffer.h"
 
 #include "PointData.h"
+#include "PointRenderer.h"
 
 
-class BasicPointRenderer
+class BasicPointRenderer : public PointRenderer
 {
 public:
 
-	~BasicPointRenderer();
+	void init(const std::vector<PointData>& point_data) override;
 
-	void addPointAt(const glm::vec3& pos);
-	void addPointAt(const glm::vec3& pos, const glm::vec3& color);
+	void render(const glm::mat4& mvp) override;
 
-	void init();
-
-	void render();
+	void cleanup() override;
 
 private:
 
 	const glm::vec3 m_default_color = glm::vec3(255.0f, 255.0f, 128.0f);
 
-	std::vector<PointData> m_points;
+	uint32_t m_point_count;
 
 	OpenGL::Shader* m_shader;
 
