@@ -15,15 +15,24 @@ public:
 
 	ComputeShaderPointRenderer(const uint32_t& screen_width, const uint32_t& screen_height);
 
-	void init(const std::vector<PointData>& point_data) override;
+protected:
+	
+	virtual void prepareComputeShader() = 0;
 
-	void render(const glm::mat4& mvp) override;
+	void preparePointsSSBO(const std::vector<PointData>& point_data);
+	void prepareDepthSSBO();
+	void prepareTextureBuffers();
 
-	void cleanup() override;
+	void executeComputeShader(const glm::mat4& mvp);
+	void renderAndClearTexture();
+	void clearDepthBuffer();
 
-	void setNumWorkGroups(const int32_t& num_work_groups);
+	void cleanupPointsSSBO();
+	void cleanupDepthSSBO();
+	void cleanupTextureBuffers();
+	void cleanupComputeShader();
 
-private:
+protected:
 
 	const glm::vec3 m_default_color = glm::vec3(255.0f, 255.0f, 128.0f);
 

@@ -15,29 +15,14 @@ int main()
         4, 5
     );
 
-    /*
-    { // Castle of chinchilla
-        std::string path = "res/point_clouds/castle_of_chinchilla_4m.las";
-        PointCloudApplication basic_point_renderer(window_settings, path, glm::vec3(0.1f, 0.0f, 1.7f));
-        basic_point_renderer.run();
-    }
-    */
-
-    /*
-    { // Arc triomphe
-        std::string path = "res/point_clouds/arc_triomphe_15m.las";
-        PointCloudApplication basic_point_renderer(window_settings, path, glm::vec3(0.0f, 0.5f, 3.2f));
-        basic_point_renderer.run();
-    }
-    */
-
+    std::vector<PointCloudSetup> point_clouds = {
+        { "Castle of chinchilla", "res/point_clouds/castle_of_chinchilla_4m.las", glm::vec3(0.1f, 0.0f, 1.7f) },
+        { "Arc de triomphe", "res/point_clouds/arc_triomphe_15m.las", glm::vec3(0.0f, 0.5f, 3.2f) },
+        { "Castle of loarre", "res/point_clouds/castle_of_loarre_42m.las", glm::vec3(0.5f, 2.0f, 7.5f) }
+    };
     
-    { // Castle of loarre
-        std::string path = "res/point_clouds/castle_of_loarre_42m.las";
-        PointCloudApplication basic_point_renderer(window_settings, path, glm::vec3(0.5f, 2.0f, 7.5f));
-        basic_point_renderer.run();
-    }
-    
+    PointCloudApplication app(window_settings, point_clouds);
+    app.run();
 
     return 0;
 }

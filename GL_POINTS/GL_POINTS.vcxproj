@@ -133,6 +133,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CSEarlyZRenderer.cpp" />
+    <ClCompile Include="src\CSZBufferRenderer.cpp" />
+    <ClCompile Include="src\CSBasicRenderer.cpp" />
     <ClCompile Include="src\EmptyPointRenderer.cpp" />
     <ClCompile Include="src\PointCloudTestingEnv.cpp" />
     <ClCompile Include="src\PointRenderer.cpp" />
@@ -140,7 +143,7 @@
     <ClCompile Include="src\OpenGL\GL_ComputeShader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PointCloudHelper.cpp" />
-    <ClCompile Include="src\BasicPointRenderer.cpp" />
+    <ClCompile Include="src\GLPointsRenderer.cpp" />
     <ClCompile Include="src\PointCloudApplication.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Camera.cpp" />
@@ -164,6 +167,9 @@
     <ClCompile Include="src\Core\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CSEarlyZRenderer.h" />
+    <ClInclude Include="src\CSZBufferRenderer.h" />
+    <ClInclude Include="src\CSBasicRenderer.h" />
     <ClInclude Include="src\PointCloudTestingEnv.h" />
     <ClInclude Include="src\EmptyPointRenderer.h" />
     <ClInclude Include="src\PointRenderer.h" />
@@ -171,7 +177,7 @@
     <ClInclude Include="src\ComputeShaderPointRenderer.h" />
     <ClInclude Include="src\OpenGL\GL_ComputeShader.h" />
     <ClInclude Include="src\PointCloudHelper.h" />
-    <ClInclude Include="src\BasicPointRenderer.h" />
+    <ClInclude Include="src\GLPointsRenderer.h" />
     <ClInclude Include="src\PointCloudApplication.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Camera.h" />

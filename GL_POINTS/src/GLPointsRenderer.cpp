@@ -1,9 +1,9 @@
-#include "BasicPointRenderer.h"
+#include "GLPointsRenderer.h"
 
 #include "OpenGL/GL_Renderer.h"
 
 
-void BasicPointRenderer::init(const std::vector<PointData>& point_data)
+void GLPointsRenderer::init(const std::vector<PointData>& point_data)
 {
 	m_point_count = point_data.size();
 
@@ -40,7 +40,7 @@ void BasicPointRenderer::init(const std::vector<PointData>& point_data)
 	delete[] points_buffer;
 }
 
-void BasicPointRenderer::render(const glm::mat4& mvp)
+void GLPointsRenderer::render(const glm::mat4& mvp)
 {
 	m_shader->bind();
 	m_shader->setUniformMat4f("u_MVP", mvp);
@@ -50,7 +50,7 @@ void BasicPointRenderer::render(const glm::mat4& mvp)
 	OpenGL::Renderer::drawArrays(*m_points_vao, DrawUsage::POINT, m_point_count);
 }
 
-void BasicPointRenderer::cleanup()
+void GLPointsRenderer::cleanup()
 {
 	delete m_points_vao;
 	delete m_points_vbo;

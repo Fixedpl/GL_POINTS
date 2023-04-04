@@ -10,8 +10,7 @@
 #include "Core/MouseInput.h"
 
 #include "PointData.h"
-#include "BasicPointRenderer.h"
-#include "ComputeShaderPointRenderer.h"
+#include "PointRenderer.h"
 
 
 class PointCloudApplication;
@@ -73,7 +72,7 @@ private:
 struct RenderMethod
 {
 	std::string label;
-	// ?
+	PointRenderer* renderer;
 };
 
 
@@ -83,6 +82,7 @@ public:
 
 	PointCloudTestingEnv(PointCloudApplication* app, std::vector<PointData>& point_cloud, 
 		const glm::vec3& starting_pos, std::function<void()> on_close);
+	~PointCloudTestingEnv();
 
 	void onUpdate(const float& dt);
 
@@ -122,16 +122,13 @@ private:
 	// Mouse related
 	bool m_first_mouse_move;
 	glm::vec2 m_last_mouse_pos;
-	float m_yaw;
+	float m_yaw = -90.0f;
 	float m_pitch;
 
 	PointCloudApplication* m_app;
 	std::vector<PointData> m_point_cloud;
 
 	std::function<void()> m_on_close;
-
-	BasicPointRenderer m_basic_renderer;
-	ComputeShaderPointRenderer m_cs_point_renderer;
 
 	PointRenderer* m_empty_renderer;
 	PointRenderer* m_current_renderer;

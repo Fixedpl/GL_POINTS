@@ -5,6 +5,12 @@
 
 #include "PointCloudApplication.h"
 
+#include "EmptyPointRenderer.h"
+#include "GLPointsRenderer.h"
+#include "CSBasicRenderer.h"
+#include "CSZBufferRenderer.h"
+#include "CSEarlyZRenderer.h"
+
 
 PointCloudTestingEnv::PointCloudTestingEnv(PointCloudApplication* app, 
 	std::vector<PointData>& point_cloud, const glm::vec3& starting_pos, std::function<void()> on_close)
@@ -20,23 +26,40 @@ PointCloudTestingEnv::PointCloudTestingEnv(PointCloudApplication* app,
 	init();
 }
 
+PointCloudTestingEnv::~PointCloudTestingEnv()
+{
+	m_current_renderer->cleanup();
+
+	delete m_empty_renderer;
+
+	for (auto& method : m_render_methods) {
+		delete method.renderer;
+	}
+
+	delete m_camera;
+}
+
 void PointCloudTestingEnv::init()
 {
+	glm::vec2 screen_size = m_app->getWindowSize();
+
 	m_render_methods = {
-		{ "GL_POINTS" },
-		{ "Basic" },
-		{ "Z-buffer" },
-		{ "Early z" }
+		{ "GL_POINTS",	new GLPointsRenderer()},
+		{ "Basic",		new CSBasicRenderer(screen_size.x, screen_size.y)},
+		{ "Z-buffer",	new CSZBufferRenderer(screen_size.x, screen_size.y)},
+		{ "Early z",	new CSEarlyZRenderer(screen_size.x, screen_size.y)}
 	};
 
-	glm::vec2 screen_size = m_app->getWindowSize();
 	m_camera = new PerspectiveCamera(screen_size.x, screen_size.y, m_starting_camera_pos);
 
+	m_empty_renderer = new EmptyPointRenderer();
+	m_current_renderer = m_empty_renderer;
 }
 
 void PointCloudTestingEnv::onUpdate(const float& dt)
 {
 	m_time_elapsed += dt;
+	m_current_renderer->render(m_camera->matrix());
 }
 
 void PointCloudTestingEnv::onImGuiUpdate()
@@ -50,7 +73,11 @@ void PointCloudTestingEnv::onImGuiUpdate()
 	ImGui::BeginListBox("Method");
 	for (auto& method : m_render_methods) {
 		if (ImGui::Selectable(method.label.c_str())) {
+			m_current_renderer->cleanup();
 
+			PointRenderer* selected = method.renderer;
+			selected->init(m_point_cloud);
+			m_current_renderer = selected;
 		}
 	}
 	ImGui::EndListBox();

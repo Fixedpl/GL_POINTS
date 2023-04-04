@@ -10,7 +10,7 @@
 #include "PointRenderer.h"
 
 
-class BasicPointRenderer : public PointRenderer
+class GLPointsRenderer : public PointRenderer
 {
 public:
 

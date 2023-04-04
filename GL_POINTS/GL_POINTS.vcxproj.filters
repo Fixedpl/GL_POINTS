@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\BasicPointRenderer.cpp" />
+    <ClCompile Include="src\GLPointsRenderer.cpp" />
     <ClCompile Include="src\PointCloudApplication.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Camera.cpp" />
@@ -30,9 +30,12 @@
     <ClCompile Include="src\PointRenderer.cpp" />
     <ClCompile Include="src\EmptyPointRenderer.cpp" />
     <ClCompile Include="src\PointCloudTestingEnv.cpp" />
+    <ClCompile Include="src\CSBasicRenderer.cpp" />
+    <ClCompile Include="src\CSZBufferRenderer.cpp" />
+    <ClCompile Include="src\CSEarlyZRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BasicPointRenderer.h" />
+    <ClInclude Include="src\GLPointsRenderer.h" />
     <ClInclude Include="src\PointCloudApplication.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Camera.h" />
@@ -347,6 +350,9 @@
     <ClInclude Include="src\PointRenderer.h" />
     <ClInclude Include="src\EmptyPointRenderer.h" />
     <ClInclude Include="src\PointCloudTestingEnv.h" />
+    <ClInclude Include="src\CSBasicRenderer.h" />
+    <ClInclude Include="src\CSZBufferRenderer.h" />
+    <ClInclude Include="src\CSEarlyZRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\GL_POINTS_f.glsl" />
