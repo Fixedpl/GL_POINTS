@@ -9,11 +9,11 @@
 
 
 
-class CSCAVGZRenderer : public PointRenderer
+class CSCAVGPointRenderer : public PointRenderer
 {
 public:
 
-	CSCAVGZRenderer(const uint32_t& screen_width, const uint32_t& screen_height);
+	CSCAVGPointRenderer(const uint32_t& screen_width, const uint32_t& screen_height, const std::string& depth_shader_path);
 
 protected:
 
@@ -47,6 +47,8 @@ protected:
 
 	uint32_t m_screen_width;
 	uint32_t m_screen_height;
+
+	std::string m_depth_shader_path;
 
 	OpenGL::Shader* m_texture_shader;
 	OpenGL::ComputeShader* m_depth_shader;

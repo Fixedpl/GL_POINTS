@@ -47,13 +47,5 @@ void main()
 
     uint z_pos = floatBitsToUint(pos.z);
 
-    depth_buffer[screen_coords_idx] = 1;
-
-    //float depth = atomicMin(depth_buffer[screen_coords_idx], z_pos);
-    //
-    //if (z_pos > depth) {
-    //    return;
-    //}
-    //
-    //depth_buffer[screen_coords_idx] = z_pos;
+    atomicMin(depth_buffer[screen_coords_idx], z_pos);
 }

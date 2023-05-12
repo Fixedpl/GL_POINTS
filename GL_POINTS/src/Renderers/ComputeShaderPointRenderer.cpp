@@ -10,7 +10,6 @@ ComputeShaderPointRenderer::ComputeShaderPointRenderer(const uint32_t& screen_wi
 	m_screen_width(screen_width),
 	m_screen_height(screen_height)
 {
-
 }
 
 void ComputeShaderPointRenderer::preparePointsSSBO(const std::vector<PointData>& point_data)

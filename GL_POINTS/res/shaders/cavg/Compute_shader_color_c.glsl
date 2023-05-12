@@ -58,14 +58,12 @@ void main()
 
     uint screen_coords_idx = screen_coords.x * u_image_size.y + screen_coords.y;
 
-    uint z_pos = floatBitsToUint(pos.z);
+    float depth = uintBitsToFloat(depth_buffer[screen_coords_idx]);
 
-    float depth = depth_buffer[screen_coords_idx];
-
-    if (z_pos <= depth * 1.01) {
-        atomicAdd(color[screen_coords_idx].r, floatBitsToUint(points[idx].r));
-        atomicAdd(color[screen_coords_idx].g, floatBitsToUint(points[idx].g));
-        atomicAdd(color[screen_coords_idx].b, floatBitsToUint(points[idx].b));
-        atomicAdd(color[screen_coords_idx].a, 1);
+    if (pos.z <= depth * 1.0005f) {
+        atomicAdd(color[screen_coords_idx].r, int(points[idx].r * 256));
+        atomicAdd(color[screen_coords_idx].g, int(points[idx].g * 256));
+        atomicAdd(color[screen_coords_idx].b, int(points[idx].b * 256));
+        atomicAdd(color[screen_coords_idx].a, 256);
     }
 }

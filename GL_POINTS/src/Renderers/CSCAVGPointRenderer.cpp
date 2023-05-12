@@ -1,19 +1,20 @@
-#include "CSCAVGZRenderer.h"
+#include "CSCAVGPointRenderer.h"
 
 #include "OpenGL/GL_gl.h"
 #include "OpenGL/GL_Renderer.h"
 
 
 
-CSCAVGZRenderer::CSCAVGZRenderer(const uint32_t& screen_width, const uint32_t& screen_height)
+CSCAVGPointRenderer::CSCAVGPointRenderer(const uint32_t& screen_width, const uint32_t& screen_height, const std::string& depth_shader_path)
 	:
 	m_screen_width(screen_width),
-	m_screen_height(screen_height)
+	m_screen_height(screen_height),
+	m_depth_shader_path(depth_shader_path)
 {
 
 }
 
-void CSCAVGZRenderer::init(const std::vector<PointData>& point_data)
+void CSCAVGPointRenderer::init(const std::vector<PointData>& point_data)
 {
 	prepareComputeShader();
 	preparePointsSSBO(point_data);
@@ -22,15 +23,15 @@ void CSCAVGZRenderer::init(const std::vector<PointData>& point_data)
 	prepareTextureBuffers();
 }
 
-void CSCAVGZRenderer::render(const glm::mat4& mvp)
+void CSCAVGPointRenderer::render(const glm::mat4& mvp)
 {
 	executeComputeShader(mvp);
 	renderAndClearTexture();
 	clearDepthBuffer();
-	cleanupPointsSSBO();
+	clearColorBuffer();
 }
 
-void CSCAVGZRenderer::cleanup()
+void CSCAVGPointRenderer::cleanup()
 {
 	cleanupPointsSSBO();
 	cleanupDepthSSBO();
@@ -39,9 +40,9 @@ void CSCAVGZRenderer::cleanup()
 	cleanupComputeShader();
 }
 
-void CSCAVGZRenderer::prepareComputeShader()
+void CSCAVGPointRenderer::prepareComputeShader()
 {
-	m_depth_shader = new OpenGL::ComputeShader("res/shaders/cavg/Compute_shader_z_buffer_c.glsl");
+	m_depth_shader = new OpenGL::ComputeShader(m_depth_shader_path);
 	m_depth_shader->bind();
 	m_depth_shader->setUniform2i("u_image_size", glm::vec2(m_screen_width, m_screen_height));
 
@@ -54,7 +55,7 @@ void CSCAVGZRenderer::prepareComputeShader()
 	m_final_shader->setUniform2i("u_image_size", glm::vec2(m_screen_width, m_screen_height));
 }
 
-void CSCAVGZRenderer::preparePointsSSBO(const std::vector<PointData>& point_data)
+void CSCAVGPointRenderer::preparePointsSSBO(const std::vector<PointData>& point_data)
 {
 	uint32_t point_count = point_data.size();
 
@@ -83,7 +84,7 @@ void CSCAVGZRenderer::preparePointsSSBO(const std::vector<PointData>& point_data
 	delete[] points_data;
 }
 
-void CSCAVGZRenderer::prepareDepthSSBO()
+void CSCAVGPointRenderer::prepareDepthSSBO()
 {
 	glGenBuffers(1, &m_depth_ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_depth_ssbo);
@@ -91,7 +92,7 @@ void CSCAVGZRenderer::prepareDepthSSBO()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_depth_ssbo);
 }
 
-void CSCAVGZRenderer::prepareColorSSBO()
+void CSCAVGPointRenderer::prepareColorSSBO()
 {
 	glGenBuffers(1, &m_color_ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_color_ssbo);
@@ -99,7 +100,7 @@ void CSCAVGZRenderer::prepareColorSSBO()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_color_ssbo);
 }
 
-void CSCAVGZRenderer::prepareTextureBuffers()
+void CSCAVGPointRenderer::prepareTextureBuffers()
 {
 	m_texture_shader = new OpenGL::Shader("res/shaders/Compute_shader_v.glsl", "res/shaders/Compute_shader_f.glsl");
 	m_texture_shader->bind();
@@ -141,7 +142,7 @@ void CSCAVGZRenderer::prepareTextureBuffers()
 	glBindImageTexture(0, m_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 }
 
-void CSCAVGZRenderer::executeComputeShader(const glm::mat4& mvp)
+void CSCAVGPointRenderer::executeComputeShader(const glm::mat4& mvp)
 {
 	m_depth_shader->bind();
 	m_depth_shader->setUniformMat4f("u_MVP", mvp);
@@ -149,19 +150,19 @@ void CSCAVGZRenderer::executeComputeShader(const glm::mat4& mvp)
 	glDispatchCompute((unsigned int)m_num_work_groups, (unsigned int)m_num_work_groups, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-	//m_color_shader->bind();
-	//m_color_shader->setUniformMat4f("u_MVP", mvp);
-	//
-	//glDispatchCompute((unsigned int)m_num_work_groups, (unsigned int)m_num_work_groups, 1);
-	//glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-	//
-	//m_final_shader->bind();
-	//
-	//glDispatchCompute((unsigned int)m_screen_width, (unsigned int)m_screen_height, 1);
-	//glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	m_color_shader->bind();
+	m_color_shader->setUniformMat4f("u_MVP", mvp);
+	
+	glDispatchCompute((unsigned int)m_num_work_groups, (unsigned int)m_num_work_groups, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	
+	m_final_shader->bind();
+	
+	glDispatchCompute((unsigned int)m_screen_width, (unsigned int)m_screen_height, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-void CSCAVGZRenderer::renderAndClearTexture()
+void CSCAVGPointRenderer::renderAndClearTexture()
 {
 	m_texture_shader->bind();
 	m_tex_quad_vao->bind();
@@ -172,7 +173,7 @@ void CSCAVGZRenderer::renderAndClearTexture()
 	glClearTexImage(m_texture, 0, GL_RGBA, GL_FLOAT, &zero);
 }
 
-void CSCAVGZRenderer::clearDepthBuffer()
+void CSCAVGPointRenderer::clearDepthBuffer()
 {
 	float one = -1.0f;
 	unsigned int float_as_uint;
@@ -182,7 +183,7 @@ void CSCAVGZRenderer::clearDepthBuffer()
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-void CSCAVGZRenderer::clearColorBuffer()
+void CSCAVGPointRenderer::clearColorBuffer()
 {
 	float zero = 0;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_color_ssbo);
@@ -190,22 +191,22 @@ void CSCAVGZRenderer::clearColorBuffer()
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-void CSCAVGZRenderer::cleanupPointsSSBO()
+void CSCAVGPointRenderer::cleanupPointsSSBO()
 {
 	glDeleteBuffers(1, &m_points_ssbo);
 }
 
-void CSCAVGZRenderer::cleanupDepthSSBO()
+void CSCAVGPointRenderer::cleanupDepthSSBO()
 {
 	glDeleteBuffers(1, &m_depth_ssbo);
 }
 
-void CSCAVGZRenderer::cleanupColorSSBO()
+void CSCAVGPointRenderer::cleanupColorSSBO()
 {
 	glDeleteBuffers(1, &m_color_ssbo);
 }
 
-void CSCAVGZRenderer::cleanupTextureBuffers()
+void CSCAVGPointRenderer::cleanupTextureBuffers()
 {
 	glDeleteTextures(1, &m_texture);
 
@@ -216,7 +217,7 @@ void CSCAVGZRenderer::cleanupTextureBuffers()
 	delete m_texture_shader;
 }
 
-void CSCAVGZRenderer::cleanupComputeShader()
+void CSCAVGPointRenderer::cleanupComputeShader()
 {
 	delete m_depth_shader;
 	delete m_color_shader;

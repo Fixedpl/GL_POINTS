@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Renderers\CSCAVGZRenderer.cpp" />
+    <ClCompile Include="src\Renderers\CSCAVGPointRenderer.cpp" />
     <ClCompile Include="src\Renderers\CSEarlyZRenderer.cpp" />
     <ClCompile Include="src\Renderers\CSZBufferRenderer.cpp" />
     <ClCompile Include="src\Renderers\CSBasicRenderer.cpp" />
@@ -168,7 +168,7 @@
     <ClCompile Include="src\Core\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Renderers\CSCAVGZRenderer.h" />
+    <ClInclude Include="src\Renderers\CSCAVGPointRenderer.h" />
     <ClInclude Include="src\Renderers\CSEarlyZRenderer.h" />
     <ClInclude Include="src\Renderers\CSZBufferRenderer.h" />
     <ClInclude Include="src\Renderers\CSBasicRenderer.h" />
@@ -489,11 +489,11 @@
     <ClInclude Include="src\Core\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\Compute_shader_basic_c.glsl" />
     <None Include="res\shaders\cavg\Compute_shader_color_c.glsl" />
-    <None Include="res\shaders\cavg\Compute_shader_early_z_c.glsl" />
     <None Include="res\shaders\cavg\Compute_shader_final_c.glsl" />
     <None Include="res\shaders\cavg\Compute_shader_z_buffer_c.glsl" />
+    <None Include="res\shaders\Compute_shader_basic_c.glsl" />
+    <None Include="res\shaders\cavg\Compute_shader_early_z_c.glsl" />
     <None Include="res\shaders\Compute_shader_early_z_c.glsl" />
     <None Include="res\shaders\Compute_shader_f.glsl" />
     <None Include="res\shaders\Compute_shader_v.glsl" />

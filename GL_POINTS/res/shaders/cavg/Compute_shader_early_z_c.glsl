@@ -2,8 +2,6 @@
 
 layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
-layout(rgba32f, binding = 0) uniform image2D imgOutput;
-
 struct Point
 {
     float x;
@@ -49,22 +47,9 @@ void main()
 
     uint z_pos = floatBitsToUint(pos.z);
 
-    if (z_pos > depth_buffer[screen_coords_idx]) {
+    if (z_pos >= depth_buffer[screen_coords_idx]) {
         return;
     }
 
-    float depth = atomicMin(depth_buffer[screen_coords_idx], z_pos);
-
-    if (z_pos > depth) {
-        return;
-    }
-
-    depth_buffer[screen_coords_idx] = z_pos;
-
-    imageStore(
-        imgOutput,
-        screen_coords,
-        vec4(points[idx].r, points[idx].g, points[idx].b, 1.0)
-    );
-
+    atomicMin(depth_buffer[screen_coords_idx], z_pos);
 }

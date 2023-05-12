@@ -33,9 +33,10 @@ void main()
         imgOutput,
         screen_coords,
         vec4(
-            uintBitsToFloat(color[screen_coords_idx].r) / color[screen_coords_idx].a,
-            uintBitsToFloat(color[screen_coords_idx].g) / color[screen_coords_idx].a,
-            uintBitsToFloat(color[screen_coords_idx].b) / color[screen_coords_idx].a,
-            1.0)
+            float(color[screen_coords_idx].r) / color[screen_coords_idx].a,
+            float(color[screen_coords_idx].g) / color[screen_coords_idx].a,
+            float(color[screen_coords_idx].b) / color[screen_coords_idx].a,
+            1.0f
+        )
     );
 }
