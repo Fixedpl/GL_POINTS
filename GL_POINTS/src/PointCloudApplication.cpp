@@ -141,5 +141,6 @@ glm::vec2 PointCloudApplication::getWindowSize()
 void PointCloudApplication::handleTestEnvClose()
 {
 	m_menu_screen_view = true;
+	m_point_cloud.clear();
 	delete m_testing_env;
 }
