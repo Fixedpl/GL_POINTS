@@ -9,7 +9,7 @@ int main()
 {
     WindowSettings window_settings(
         1600, 900,
-        "Rendering point clouds using GL_POINTS",
+        "Rendering point clouds",
         false,
         true,
         4, 5

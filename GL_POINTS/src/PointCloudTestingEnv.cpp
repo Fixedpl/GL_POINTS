@@ -10,6 +10,7 @@
 #include "Renderers/CSBasicRenderer.h"
 #include "Renderers/CSZBufferRenderer.h"
 #include "Renderers/CSEarlyZRenderer.h"
+#include "Renderers/CSCAVGZRenderer.h"
 
 
 PointCloudTestingEnv::PointCloudTestingEnv(PointCloudApplication* app, 
@@ -49,13 +50,18 @@ void PointCloudTestingEnv::init()
 		{ "GL_POINTS",	new GLPointsRenderer()},
 		{ "Basic",		new CSBasicRenderer(screen_size.x, screen_size.y)},
 		{ "Z-buffer",	new CSZBufferRenderer(screen_size.x, screen_size.y)},
-		{ "Early z",	new CSEarlyZRenderer(screen_size.x, screen_size.y)}
+		{ "Early z",	new CSEarlyZRenderer(screen_size.x, screen_size.y)},
+		{ "Color average, Z-buffer", new CSCAVGZRenderer(screen_size.x, screen_size.y) }
 	};
 
 	m_camera = new PerspectiveCamera(screen_size.x, screen_size.y, m_starting_camera_pos);
 
 	m_empty_renderer = new EmptyPointRenderer();
 	m_current_renderer = m_empty_renderer;
+
+	PointRenderer* selected = m_render_methods[4].renderer;
+	selected->init(m_point_cloud);
+	m_current_renderer = selected;
 }
 
 void PointCloudTestingEnv::onUpdate(const float& dt)

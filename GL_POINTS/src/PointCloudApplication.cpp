@@ -40,6 +40,17 @@ PointCloudApplication::~PointCloudApplication()
 void PointCloudApplication::beforeUpdate()
 {
 	init();
+	loadPoints(m_setups[0].path);
+	m_menu_screen_view = false;
+
+	m_testing_env = new PointCloudTestingEnv(
+		this,
+		m_point_cloud,
+		m_setups[0].starting_camera_pos,
+		[this]() {
+			this->m_test_env_close_request = true;
+		}
+	);
 }
 
 void PointCloudApplication::onEvent(const float& delta)
