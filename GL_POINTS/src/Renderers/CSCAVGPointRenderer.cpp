@@ -169,8 +169,11 @@ void CSCAVGPointRenderer::renderAndClearTexture()
 
 	OpenGL::Renderer::drawArrays(*m_tex_quad_vao, DrawUsage::TRIANGLE, 6);
 
-	float zero = 0.0f;
-	glClearTexImage(m_texture, 0, GL_RGBA, GL_FLOAT, &zero);
+	float default_texture_color[4] = {
+		0.5f, 0.65f, 1.0f, 1.0f
+	};
+
+	glClearTexImage(m_texture, 0, GL_RGBA, GL_FLOAT, &default_texture_color);
 }
 
 void CSCAVGPointRenderer::clearDepthBuffer()

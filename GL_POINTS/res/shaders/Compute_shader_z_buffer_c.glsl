@@ -6,13 +6,8 @@ layout(rgba32f, binding = 0) uniform image2D imgOutput;
 
 struct Point
 {
-    float x;
-    float y;
-    float z;
-
-    float r;
-    float g;
-    float b;
+    float x, y, z;
+    float r, g, b;
 };
 
 layout(std430, binding = 2) buffer depthLayout
@@ -31,7 +26,8 @@ uniform ivec2 u_image_size;
 void main()
 {
     uint idx = gl_LocalInvocationIndex +
-        gl_WorkGroupSize.x * gl_WorkGroupSize.y * (gl_WorkGroupID.x * gl_NumWorkGroups.x + gl_WorkGroupID.y);
+        gl_WorkGroupSize.x * gl_WorkGroupSize.y * 
+        (gl_WorkGroupID.x * gl_NumWorkGroups.x + gl_WorkGroupID.y);
 
     vec4 pos = u_MVP * vec4(points[idx].x, points[idx].y, points[idx].z, 1.0);
     pos.xyz = pos.xyz / pos.w;
@@ -47,20 +43,17 @@ void main()
 
     uint screen_coords_idx = screen_coords.x * u_image_size.y + screen_coords.y;
 
-    uint z_pos = floatBitsToUint(pos.z);
+    uint point_depth = floatBitsToUint(pos.z);
 
-    float depth = atomicMin(depth_buffer[screen_coords_idx], z_pos);
+    atomicMin(depth_buffer[screen_coords_idx], point_depth);
 
-    if (z_pos > depth) {
+    if (point_depth > depth_buffer[screen_coords_idx]) {
         return;
     }
-
-    depth_buffer[screen_coords_idx] = z_pos;
 
     imageStore(
         imgOutput,
         screen_coords,
         vec4(points[idx].r, points[idx].g, points[idx].b, 1.0)
     );
-
 }

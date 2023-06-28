@@ -47,12 +47,30 @@ void PointCloudTestingEnv::init()
 	glm::vec2 screen_size = m_app->getWindowSize();
 
 	m_render_methods = {
-		{ "GL_POINTS",	new GLPointsRenderer()},
-		{ "Basic",		new CSBasicRenderer(screen_size.x, screen_size.y)},
-		{ "Z-buffer",	new CSZBufferRenderer(screen_size.x, screen_size.y)},
-		{ "Early z",	new CSEarlyZRenderer(screen_size.x, screen_size.y)},
-		{ "Color average, Z-buffer", new CSCAVGPointRenderer(screen_size.x, screen_size.y, "res/shaders/cavg/Compute_shader_z_buffer_c.glsl") },
-		{ "Color average, Early z", new CSCAVGPointRenderer(screen_size.x, screen_size.y, "res/shaders/cavg/Compute_shader_early_z_c.glsl") }
+		{ 
+			"GL_POINTS",	
+			new GLPointsRenderer()
+		},
+		{ 
+			"BASIC",		
+			new CSBasicRenderer(screen_size.x, screen_size.y)
+		},
+		{ 
+			"BASIC, Z-BUFFER",	
+			new CSZBufferRenderer(screen_size.x, screen_size.y)
+		},
+		{ 
+			"BASIC, EARLY Z",	
+			new CSEarlyZRenderer(screen_size.x, screen_size.y)
+		},
+		{ 
+			"COLOR AVERAGE, Z-BUFFER", 
+			new CSCAVGPointRenderer(screen_size.x, screen_size.y, "res/shaders/cavg/Compute_shader_z_buffer_c.glsl") 
+		},
+		{ 
+			"COLOR AVERAGE, EARLY Z", 
+			new CSCAVGPointRenderer(screen_size.x, screen_size.y, "res/shaders/cavg/Compute_shader_early_z_c.glsl") 
+		}
 	};
 
 	m_camera = new PerspectiveCamera(screen_size.x, screen_size.y, m_starting_camera_pos);
@@ -174,8 +192,8 @@ void PointCloudTestingEnv::imGuiFps()
 		m_tick++;
 	}
 
-	if (ImPlot::BeginPlot("Line Plots", ImVec2(400, 200))) {
-		ImPlot::SetupAxes("FPS", "t");
+	if (ImPlot::BeginPlot("Performance", ImVec2(400, 200))) {
+		ImPlot::SetupAxes("t", "ms");
 		ImPlot::SetupAxesLimits(
 			std::max(0.0f, m_time_elapsed - m_seconds_measured),
 			std::max(m_seconds_measured - 2 * m_polling_rate,

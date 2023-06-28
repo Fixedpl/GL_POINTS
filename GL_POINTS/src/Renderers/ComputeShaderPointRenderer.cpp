@@ -78,6 +78,7 @@ void ComputeShaderPointRenderer::prepareTextureBuffers()
 
 	m_tex_quad_vbo->update(quad_buffer, sizeof(float) * 6 * 5, 0);
 
+
 	glGenTextures(1, &m_texture);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -108,8 +109,11 @@ void ComputeShaderPointRenderer::renderAndClearTexture()
 
 	OpenGL::Renderer::drawArrays(*m_tex_quad_vao, DrawUsage::TRIANGLE, 6);
 
-	float zero = 0.0f;
-	glClearTexImage(m_texture, 0, GL_RGBA, GL_FLOAT, &zero);
+	float default_texture_color[4] = {
+		0.5f, 0.65f, 1.0f, 1.0f
+	};
+
+	glClearTexImage(m_texture, 0, GL_RGBA, GL_FLOAT, &default_texture_color);
 }
 
 void ComputeShaderPointRenderer::clearDepthBuffer()

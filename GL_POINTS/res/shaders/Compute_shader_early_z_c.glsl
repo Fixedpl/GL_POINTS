@@ -47,19 +47,17 @@ void main()
 
     uint screen_coords_idx = screen_coords.x * u_image_size.y + screen_coords.y;
 
-    uint z_pos = floatBitsToUint(pos.z);
+    uint point_depth = floatBitsToUint(pos.z);
 
-    if (z_pos > depth_buffer[screen_coords_idx]) {
+    if (point_depth > depth_buffer[screen_coords_idx]) {
         return;
     }
 
-    float depth = atomicMin(depth_buffer[screen_coords_idx], z_pos);
+    atomicMin(depth_buffer[screen_coords_idx], point_depth);
 
-    if (z_pos > depth) {
+    if (point_depth > depth_buffer[screen_coords_idx]) {
         return;
     }
-
-    depth_buffer[screen_coords_idx] = z_pos;
 
     imageStore(
         imgOutput,
